@@ -97,8 +97,18 @@ After the transfer is completed, the treasury state is updated by reducing the t
 
 </details>
 
+<details>
+<summary>Repay loan</summary>
+This instruction is called when the user repays their loan after the borrowing period. At this stage, the protocol calculates accrued interest based on borrow_amount, interest_rate, and time elapsed (current_time - borrow_time) using the simple interest formula. Funds are transferred from user's token account (user_ata) to treasury's token account (treasury_ata) via CPI to token program, authorized by the user signer.
 
-<img width="944" height="240" alt="image" src="https://github.com/user-attachments/assets/6b0b430a-d099-49ca-8528-9ab74a22cce5" />
+After transfer completion, pool state clears loan_amount, borrow_amount, and borrow_time to zero, while treasury state increases total_liquidity by principal + interest and decreases total_borrowed by principal amount. This maintains accurate protocol accounting and releases the user's collateral lock.
+
+<img width="1495" height="437" alt="image" src="https://github.com/user-attachments/assets/7b2e7a93-0eb9-44b4-9fbb-59d51ba4168f" />
+
+
+</details>
+
+
 
 
 ## Key Features
