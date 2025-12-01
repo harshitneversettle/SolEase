@@ -10,7 +10,7 @@ The following documents and diagrams were **created specifically for this projec
 
 * SRS Document :
   [https://drive.google.com/file/d/1xaPzXe70YgVkHRmb8qAa3M_LEVi3Chnu/view?usp=sharing](https://drive.google.com/file/d/1xaPzXe70YgVkHRmb8qAa3M_LEVi3Chnu/view?usp=sharing)
-* Diagrams & Architecture : [https://excalidraw.com/#json=v0vRE3XmlTIUKHpM3PTWY,B6AK6g6iPVOS5lKNkk4FFQ](https://excalidraw.com/#json=v0vRE3XmlTIUKHpM3PTWY,B6AK6g6iPVOS5lKNkk4FFQ)
+* Diagrams & Architecture :[https://excalidraw.com/#json=v0vRE3XmlTIUKHpM3PTWY,B6AK6g6iPVOS5lKNkk4FFQ](https://excalidraw.com/#json=v0vRE3XmlTIUKHpM3PTWY,B6AK6g6iPVOS5lKNkk4FFQ)
 
 ---
 
@@ -23,7 +23,7 @@ Users interact with the platform through an intuitive web interface connected to
 ---
 
 
-## instructions 
+## Instructions 
 <details>
 <summary>Initialize Treasury</summary>
 
