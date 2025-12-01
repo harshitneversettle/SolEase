@@ -52,7 +52,7 @@ use pyth_sdk_solana::load_price_feed_from_account_info;
         let collateral_ratio = ((collateral_amount as u128) * 1_000_000_000_u128) / (curr_price as u128);
         let max_borrow = ((collateral_ratio * (ltv as u128)) / 100) as u64; 
 
-        
+    
         let amount: u64 = max_borrow as u64;
 
         let bump = treasury.bump;
