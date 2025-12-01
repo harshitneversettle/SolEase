@@ -3,6 +3,10 @@
     use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer, accessor::amount};
     use anchor_spl::associated_token::AssociatedToken;
     use crate::states::{PoolState, TreasuryState};
+    use pyth_solana_receiver_sdk::price_update::{PriceUpdateV2};
+    use pyth_solana_receiver_sdk::price_update::get_feed_id_from_hex;
+use pyth_sdk_solana::load_price_feed_from_account_info;
+
 
 
 
@@ -42,8 +46,14 @@
         let treasury = &mut ctx.accounts.treasury_state ;
         let pool = &mut ctx.accounts.pool_state ; 
 
+        let ltv = pool.ltv as u64 ;
+        let curr_price = 142000000  ;   // of sol/usdc ;
+        let collateral_amount = pool.collateral_amount * 1000000  ;   // in lamports 
+        let collateral_ratio = ((collateral_amount as u128) * 1_000_000_000_u128) / (curr_price as u128);
+        let max_borrow = ((collateral_ratio * (ltv as u128)) / 100) as u64; 
+
         
-        let amount  = 1 * LAMPORTS_PER_SOL ;
+        let amount: u64 = max_borrow as u64;
 
         let bump = treasury.bump;
         let seeds: &[&[u8]] = &[b"treasury", &[bump]];
@@ -59,11 +69,11 @@
 
         token::transfer(cpi_context, amount)?;
 
-        treasury.total_liquidity -= amount ;
-        treasury.total_borrowed += amount ;
-        pool.loan_amount += amount; 
+        treasury.total_liquidity -= amount as u64;
+        treasury.total_borrowed += amount as u64 ;
+        pool.loan_amount += amount as u64 ; 
         pool.last_update_time = Clock::get()?.unix_timestamp;
-        pool.borrow_amount = amount ;
+        pool.borrow_amount = amount as u64 ;
         pool.borrow_time = Clock::get()?.unix_timestamp ; 
         msg!("Borrowed {} at timestamp {}", amount, Clock::get()?.unix_timestamp);
         Ok(())

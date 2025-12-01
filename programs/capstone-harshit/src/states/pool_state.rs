@@ -6,6 +6,7 @@ pub struct PoolState {
   pub owner : Pubkey ,
   pub collateral_mint : Pubkey ,
   pub collateral_amount : u64 ,
+  pub ltv : u32 ,
   pub loan_mint : Pubkey ,
   pub loan_amount : u64 ,
   pub vault_ata : Pubkey ,

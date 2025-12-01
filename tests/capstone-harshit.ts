@@ -9,6 +9,10 @@ import {
   LAMPORTS_PER_SOL,
   sendAndConfirmTransaction,
 } from "@solana/web3.js";
+import {
+  PriceServiceConnection,
+} from "@pythnetwork/pyth-evm-js";
+
 
 import {
   createMint,
@@ -381,6 +385,7 @@ describe("LFG!!", () => {
 
   // borrowing logic
   it("Borrowing from treasury-> ", async () => {
+   
     let poolPda: PublicKey;
     let treasuryPda: PublicKey;
     let loanMint: PublicKey;
