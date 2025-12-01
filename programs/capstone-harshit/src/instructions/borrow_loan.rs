@@ -63,7 +63,9 @@
         treasury.total_borrowed += amount ;
         pool.loan_amount += amount; 
         pool.last_update_time = Clock::get()?.unix_timestamp;
-
+        pool.borrow_amount = amount ;
+        pool.borrow_time = Clock::get()?.unix_timestamp ; 
+        msg!("Borrowed {} at timestamp {}", amount, Clock::get()?.unix_timestamp);
         Ok(())
 
     }

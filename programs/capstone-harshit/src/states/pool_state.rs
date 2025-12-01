@@ -13,4 +13,6 @@ pub struct PoolState {
   pub last_update_time : i64,
   pub bump : u8 ,      // bump of this pda 
   pub vault_authority_bump: u8,
+  pub borrow_amount : u64 ,
+  pub borrow_time : i64 ,
 }

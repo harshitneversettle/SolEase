@@ -26,13 +26,13 @@ pub struct InitializePool<'info> {
     payer = owner,
     associated_token::mint = collateral_mint ,
     associated_token::authority = vault_authority ,
-  )]
+  )]  
   pub vault_ata : Account<'info , TokenAccount> ,
 
   #[account(mut)]
   pub owner : Signer<'info> ,
 
-  pub collateral_mint : Account<'info,Mint> ,
+  pub collateral_mint : Account<'info,Mint> , 
   pub loan_mint : Account<'info , Mint> ,
   pub system_program: Program<'info, System>,
   pub associated_token_program: Program<'info, AssociatedToken>,

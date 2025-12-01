@@ -32,4 +32,8 @@ pub mod capstone_harshit {
     pub fn borrow_loan(ctx : Context<BorrowLoan>)->Result<()>{
         instructions::borrow_loan::handler(ctx)
     }
+
+    pub fn repay_loan(ctx : Context<RepayLoan>)->Result<()>{
+        instructions::repay_loan::handler(ctx)
+    }
 }
