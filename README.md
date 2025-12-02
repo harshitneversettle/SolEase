@@ -111,6 +111,14 @@ After transfer completion, pool state clears loan_amount, borrow_amount, and bor
 </details>
 
 
+<details>
+<summary>LP State initialization</summary>
+The LP state initialization instruction creates a dedicated LiquidatorState PDA for each liquidity provider using their wallet address as a seed. It also initializes the LP’s associated token account for the chosen liquidity mint and stores references to this ATA, the mint, and the relevant treasury authority bump.
+All numeric fields such as deposited amount, current liquidity, and timestamps are set to zero, so the protocol has a clean starting record from which it can track each LP’s future deposits and withdrawals.
+
+
+</details>
+
 
 
 ## Key Features
