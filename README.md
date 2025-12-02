@@ -1,4 +1,4 @@
-# Decentralized Lend and Borrow System
+# SolEase – Simplifying lending and borrowing on Solana.
 
 A secure, transparent, and user-friendly decentralized finance (DeFi) protocol built on the Solana blockchain for seamless lending and borrowing of digital assets.
 
