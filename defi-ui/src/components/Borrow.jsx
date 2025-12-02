@@ -17,22 +17,25 @@ export default function Borrow({ disabled, onSuccess }) {
 
   if (!program && !error) {
     return (
-      <div style={{ padding: "20px" }}>
-        <p>⏳ Loading...</p>
+      <div className="p-4 border border-gray-800 rounded-md text-sm text-gray-300">
+        Loading borrow module...
       </div>
     );
   }
 
   if (error) {
     return (
-      <div style={{ padding: "20px" }}>
-        <p>⚠️ {error}</p>
+      <div className="p-4 border border-red-700 rounded-md text-sm text-red-300">
+        {error}
       </div>
     );
   }
 
   const handleBorrow = async () => {
-    if (!publicKey) return alert("❌ Connect wallet!");
+    if (!publicKey) {
+      alert("Connect wallet first.");
+      return;
+    }
 
     setLoading(true);
     setTxSignature(null);
@@ -67,49 +70,42 @@ export default function Borrow({ disabled, onSuccess }) {
         TOKEN_PROGRAM_ID
       );
 
-      // Check if user ATA exists; create if missing
       const ataInfo = await connection.getAccountInfo(userAta);
       if (!ataInfo) {
         const createAtaIx = createAssociatedTokenAccountInstruction(
-          publicKey, // payer
-          userAta, // ATA address
-          publicKey, // owner
+          publicKey,
+          userAta,
+          publicKey,
           LIQUIDITY_MINT
         );
-
         const tx = new Transaction().add(createAtaIx);
         const sig = await sendTransaction(tx, connection);
         await connection.confirmTransaction(sig, "confirmed");
-        console.log("Created user ATA with tx:", sig);
       }
 
-      // Call borrow method
       const tx = await program.methods
         .borrow()
         .accounts({
           poolState: poolStatePda,
           treasuryState: treasuryStatePda,
           loanMint: LIQUIDITY_MINT,
-          userAta: userAta,
+          userAta,
           owner: publicKey,
-          treasuryAta: treasuryAta,
-          treasuryAuthority: treasuryAuthority,
+          treasuryAta,
+          treasuryAuthority,
           tokenProgram: TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
         })
         .rpc();
 
-      console.log("Borrow TX:", tx);
-
       await connection.confirmTransaction(tx, "confirmed");
       setTxSignature(tx);
-      alert("✅ Borrowed 1 SOL successfully!");
-
+      alert("Borrowed 1 SOL successfully.");
       if (onSuccess) onSuccess();
     } catch (err) {
       console.error("Borrow failed:", err);
-      alert(`❌ ${err.message}`);
+      alert(err.message || "Borrow failed.");
     } finally {
       setLoading(false);
     }
@@ -117,61 +113,32 @@ export default function Borrow({ disabled, onSuccess }) {
 
   return (
     <div
-      style={{
-        padding: "20px",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        opacity: disabled ? 0.5 : 1,
-        pointerEvents: disabled ? "none" : "auto",
-      }}
+      className={`p-4 border rounded-md bg-gray-900 text-sm ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      }`}
     >
-      <h3 style={{ marginTop: 0, color: "#9C27B0" }}>💸 Borrow Assets</h3>
-      <p style={{ fontSize: "14px", color: "#666" }}>
-        Borrow 1 SOL against your collateral
+      <h3 className="text-base font-semibold mb-1 text-white">Borrow</h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Borrow 1 SOL against your deposited collateral.
       </p>
 
       <button
         onClick={handleBorrow}
         disabled={loading || disabled}
-        style={{
-          padding: "12px 24px",
-          fontSize: "14px",
-          fontWeight: "600",
-          cursor: loading || disabled ? "not-allowed" : "pointer",
-          backgroundColor: loading || disabled ? "#ccc" : "#9C27B0",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          width: "100%",
-        }}
+        className="w-full py-2 text-sm font-medium rounded-md bg-purple-600 text-white disabled:bg-gray-600"
       >
-        {loading ? "⏳ Processing..." : "Borrow 1 SOL"}
+        {loading ? "Processing..." : "Borrow 1 SOL"}
       </button>
 
       {txSignature && (
-        <div
-          style={{
-            marginTop: "15px",
-            padding: "10px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "4px",
-          }}
-        >
-          <p style={{ margin: 0, color: "#2e7d32", fontSize: "13px" }}>
-            ✅ Success!
-          </p>
-        </div>
+        <p className="mt-3 text-xs text-green-400 break-all">
+          Transaction: {txSignature}
+        </p>
       )}
 
       {disabled && (
-        <p
-          style={{
-            fontSize: "12px",
-            color: "#f44336",
-            marginTop: "10px",
-          }}
-        >
-          ⚠️ Deposit collateral first before borrowing
+        <p className="mt-2 text-xs text-red-400">
+          Deposit collateral before borrowing.
         </p>
       )}
     </div>

@@ -75,7 +75,7 @@ pub fn handler(ctx : Context<UserDeposit> , amount : u64)->Result<()> {
 
     token::transfer(cpi_context, amount)?;
 
-    treasury.total_liquidity += amount ;
+    treasury.total_liquidity = treasury.total_liquidity.checked_add(amount).expect("overflow") ;
 
     msg!(
         "User {} deposited {} tokens successfully!",

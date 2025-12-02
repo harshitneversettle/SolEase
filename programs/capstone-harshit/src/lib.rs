@@ -13,6 +13,10 @@ pub mod capstone_harshit {
 
     use super::*;
 
+    pub fn initialize_liquidator_state(ctx: Context<InitializeLpState>) -> Result<()> {
+        instructions::initialize_lp_state::handler(ctx)
+    }  
+
     pub fn initialize_treasury(ctx: Context<InitializeTreasury>) -> Result<()> {
         instructions::initialize_treasury::handler(ctx)
     }  
@@ -37,3 +41,4 @@ pub mod capstone_harshit {
         instructions::repay_loan::handler(ctx)
     }
 }
+

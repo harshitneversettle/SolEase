@@ -1,5 +1,5 @@
 {
-  "address": "EKAaTiK6Fg19wAy9FGXTC171ZtkPCdiK7zrfQ47px5Cf",
+  "address": "CjPe2KvPS1zrjudwdtWbUN9bxYnKaz96g9QiqSd8zPed",
   "metadata": {
     "name": "capstone_harshit",
     "version": "0.1.0",
@@ -8,8 +8,17 @@
   },
   "instructions": [
     {
-      "name": "borrow",
-      "discriminator": [228, 253, 131, 202, 207, 116, 89, 18],
+      "name": "borrow_loan",
+      "discriminator": [
+        102,
+        104,
+        167,
+        127,
+        209,
+        245,
+        251,
+        194
+      ],
       "accounts": [
         {
           "name": "pool_state",
@@ -23,7 +32,7 @@
           "name": "loan_mint"
         },
         {
-          "name": "user_ata",
+          "name": "user_loan_ata",
           "writable": true
         },
         {
@@ -40,7 +49,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               }
             ]
           }
@@ -61,8 +79,17 @@
       "args": []
     },
     {
-      "name": "deposit",
-      "discriminator": [242, 35, 198, 137, 82, 225, 242, 182],
+      "name": "deposit_collateral",
+      "discriminator": [
+        156,
+        131,
+        142,
+        116,
+        146,
+        247,
+        162,
+        120
+      ],
       "accounts": [
         {
           "name": "pool_state",
@@ -74,11 +101,27 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [118, 97, 117, 108, 116]
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
               },
               {
                 "kind": "account",
-                "path": "pool_state"
+                "path": "owner"
               }
             ]
           }
@@ -98,9 +141,38 @@
               {
                 "kind": "const",
                 "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
                 ]
               },
               {
@@ -111,15 +183,44 @@
             "program": {
               "kind": "const",
               "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
               ]
             }
           }
         },
         {
-          "name": "user_ata",
+          "name": "user_collateral_ata",
           "writable": true
         },
         {
@@ -149,7 +250,16 @@
     },
     {
       "name": "deposit_treasury",
-      "discriminator": [2, 129, 72, 214, 50, 94, 151, 230],
+      "discriminator": [
+        2,
+        129,
+        72,
+        214,
+        50,
+        94,
+        151,
+        230
+      ],
       "accounts": [
         {
           "name": "treasury_state",
@@ -158,7 +268,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               }
             ]
           }
@@ -171,7 +290,18 @@
               {
                 "kind": "const",
                 "value": [
-                  117, 115, 101, 114, 45, 100, 101, 112, 111, 115, 105, 116
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  100,
+                  101,
+                  112,
+                  111,
+                  115,
+                  105,
+                  116
                 ]
               },
               {
@@ -187,7 +317,16 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               }
             ]
           }
@@ -203,7 +342,9 @@
         },
         {
           "name": "liquidity_mint",
-          "relations": ["treasury_state"]
+          "relations": [
+            "treasury_state"
+          ]
         },
         {
           "name": "treasury_ata",
@@ -230,8 +371,17 @@
       ]
     },
     {
-      "name": "initialize",
-      "discriminator": [175, 175, 109, 31, 13, 152, 155, 237],
+      "name": "initialize_pool",
+      "discriminator": [
+        95,
+        180,
+        10,
+        172,
+        84,
+        174,
+        232,
+        40
+      ],
       "accounts": [
         {
           "name": "pool_state",
@@ -240,13 +390,144 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [117, 115, 101, 114, 45, 112, 111, 111, 108]
+                "value": [
+                  117,
+                  115,
+                  101,
+                  114,
+                  45,
+                  112,
+                  111,
+                  111,
+                  108
+                ]
               },
               {
                 "kind": "account",
                 "path": "owner"
               }
             ]
+          }
+        },
+        {
+          "name": "vault_authority",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_ata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "vault_authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
           }
         },
         {
@@ -263,13 +544,30 @@
         {
           "name": "system_program",
           "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         }
       ],
       "args": []
     },
     {
       "name": "initialize_treasury",
-      "discriminator": [124, 186, 211, 195, 85, 165, 129, 166],
+      "discriminator": [
+        124,
+        186,
+        211,
+        195,
+        85,
+        165,
+        129,
+        166
+      ],
       "accounts": [
         {
           "name": "treasury_state",
@@ -278,47 +576,29 @@
             "seeds": [
               {
                 "kind": "const",
-                "value": [116, 114, 101, 97, 115, 117, 114, 121]
+                "value": [
+                  116,
+                  114,
+                  101,
+                  97,
+                  115,
+                  117,
+                  114,
+                  121
+                ]
               }
             ]
           }
         },
         {
-          "name": "owner",
+          "name": "admin",
           "writable": true,
           "signer": true
         },
         {
           "name": "treasury_vault",
           "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "account",
-                "path": "treasury_state"
-              },
-              {
-                "kind": "const",
-                "value": [
-                  6, 221, 246, 225, 215, 101, 161, 147, 217, 203, 225, 70, 206,
-                  235, 121, 172, 28, 180, 133, 237, 95, 91, 55, 145, 58, 140,
-                  245, 133, 126, 255, 0, 169
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "liquidity_mint"
-              }
-            ],
-            "program": {
-              "kind": "const",
-              "value": [
-                140, 151, 37, 143, 78, 36, 137, 241, 187, 61, 16, 41, 20, 142,
-                13, 131, 11, 90, 19, 153, 218, 255, 16, 132, 4, 142, 123, 216,
-                219, 233, 248, 89
-              ]
-            }
-          }
+          "signer": true
         },
         {
           "name": "liquidity_mint"
@@ -337,20 +617,226 @@
         }
       ],
       "args": []
+    },
+    {
+      "name": "repay_loan",
+      "discriminator": [
+        224,
+        93,
+        144,
+        77,
+        61,
+        17,
+        137,
+        54
+      ],
+      "accounts": [
+        {
+          "name": "treasury_state",
+          "writable": true
+        },
+        {
+          "name": "pool_state",
+          "writable": true
+        },
+        {
+          "name": "owner",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "user_loan_ata",
+          "writable": true
+        },
+        {
+          "name": "vault_authority",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116,
+                  45,
+                  97,
+                  117,
+                  116,
+                  104,
+                  111,
+                  114,
+                  105,
+                  116,
+                  121
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "owner"
+              }
+            ]
+          }
+        },
+        {
+          "name": "collateral_mint",
+          "writable": true
+        },
+        {
+          "name": "vault_ata",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "account",
+                "path": "vault_authority"
+              },
+              {
+                "kind": "const",
+                "value": [
+                  6,
+                  221,
+                  246,
+                  225,
+                  215,
+                  101,
+                  161,
+                  147,
+                  217,
+                  203,
+                  225,
+                  70,
+                  206,
+                  235,
+                  121,
+                  172,
+                  28,
+                  180,
+                  133,
+                  237,
+                  95,
+                  91,
+                  55,
+                  145,
+                  58,
+                  140,
+                  245,
+                  133,
+                  126,
+                  255,
+                  0,
+                  169
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "collateral_mint"
+              }
+            ],
+            "program": {
+              "kind": "const",
+              "value": [
+                140,
+                151,
+                37,
+                143,
+                78,
+                36,
+                137,
+                241,
+                187,
+                61,
+                16,
+                41,
+                20,
+                142,
+                13,
+                131,
+                11,
+                90,
+                19,
+                153,
+                218,
+                255,
+                16,
+                132,
+                4,
+                142,
+                123,
+                216,
+                219,
+                233,
+                248,
+                89
+              ]
+            }
+          }
+        },
+        {
+          "name": "user_collateral_ata",
+          "writable": true
+        },
+        {
+          "name": "treasury_ata",
+          "writable": true
+        },
+        {
+          "name": "token_program",
+          "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        },
+        {
+          "name": "associated_token_program",
+          "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
+        }
+      ],
+      "args": []
     }
   ],
   "accounts": [
     {
       "name": "PoolState",
-      "discriminator": [247, 237, 227, 245, 215, 195, 222, 70]
+      "discriminator": [
+        247,
+        237,
+        227,
+        245,
+        215,
+        195,
+        222,
+        70
+      ]
     },
     {
       "name": "TreasuryState",
-      "discriminator": [240, 56, 226, 158, 138, 244, 79, 154]
+      "discriminator": [
+        240,
+        56,
+        226,
+        158,
+        138,
+        244,
+        79,
+        154
+      ]
     },
     {
       "name": "UserTreasury",
-      "discriminator": [92, 249, 251, 242, 84, 235, 237, 178]
+      "discriminator": [
+        92,
+        249,
+        251,
+        242,
+        84,
+        235,
+        237,
+        178
+      ]
     }
   ],
   "types": [
@@ -372,6 +858,10 @@
             "type": "u64"
           },
           {
+            "name": "ltv",
+            "type": "u32"
+          },
+          {
             "name": "loan_mint",
             "type": "pubkey"
           },
@@ -389,11 +879,23 @@
           },
           {
             "name": "last_update_time",
-            "type": "i32"
+            "type": "i64"
           },
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "vault_authority_bump",
+            "type": "u8"
+          },
+          {
+            "name": "borrow_amount",
+            "type": "u64"
+          },
+          {
+            "name": "borrow_time",
+            "type": "i64"
           }
         ]
       }
@@ -420,12 +922,20 @@
             "type": "u64"
           },
           {
-            "name": "interest_rate",
+            "name": "royality_rate",
             "type": "u16"
+          },
+          {
+            "name": "interest_rate",
+            "type": "u64"
           },
           {
             "name": "bump",
             "type": "u8"
+          },
+          {
+            "name": "total_interest_gained",
+            "type": "u128"
           }
         ]
       }

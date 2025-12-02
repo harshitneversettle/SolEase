@@ -33,7 +33,7 @@ pub struct DepositCollateral<'info>{
     pub vault_ata: Account<'info, TokenAccount>,
 
     #[account(mut)]
-    pub user_ata: Account<'info, TokenAccount>,
+    pub user_collateral_ata : Account<'info, TokenAccount>,
 
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -48,7 +48,7 @@ pub fn handler(ctx: Context<DepositCollateral> , amount : u64  ) -> Result<()>{
     let pool = &mut ctx.accounts.pool_state ;
 
     let transfer_accounts = Transfer{
-        from : ctx.accounts.user_ata.to_account_info() ,
+        from : ctx.accounts.user_collateral_ata.to_account_info() ,
         to : ctx.accounts.vault_ata.to_account_info() ,
         authority : ctx.accounts.owner.to_account_info() ,
     } ;
@@ -57,7 +57,7 @@ pub fn handler(ctx: Context<DepositCollateral> , amount : u64  ) -> Result<()>{
 
     token::transfer(cpi_ctx, amount)?;
 
-    pool.collateral_amount += amount ;
+    pool.collateral_amount = pool.collateral_amount.checked_add(amount).expect("overflow");
     msg!("Deposited: {} tokens into vault {}", amount, ctx.accounts.vault_ata.key());
 
     Ok(())

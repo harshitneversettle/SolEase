@@ -10,28 +10,15 @@ import { PublicKey, SystemProgram } from "@solana/web3.js";
 
 export default function InitializePool({ onSuccess, disabled }) {
   const { publicKey } = useWallet();
-  const { program, connection, error } = useProgram();
+  const { program, connection } = useProgram();
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState(null);
 
-  if (!program && !error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⏳ Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⚠️ {error}</p>
-      </div>
-    );
-  }
-
   const handleInit = async () => {
-    if (!publicKey) return alert("❌ Connect wallet!");
+    if (!program || !connection || !publicKey) {
+      alert("Connect wallet first.");
+      return;
+    }
 
     setLoading(true);
     setTxSignature(null);
@@ -41,8 +28,6 @@ export default function InitializePool({ onSuccess, disabled }) {
         [Buffer.from("user-pool"), publicKey.toBuffer()],
         PROGRAM_ID
       );
-
-      console.log("Pool State PDA:", poolStatePda.toBase58());
 
       const tx = await program.methods
         .initialize()
@@ -55,16 +40,13 @@ export default function InitializePool({ onSuccess, disabled }) {
         })
         .rpc();
 
-      console.log("Initialize Pool TX:", tx);
-
       await connection.confirmTransaction(tx, "confirmed");
       setTxSignature(tx);
-      alert("✅ Pool initialized!");
-
       if (onSuccess) onSuccess();
+      alert("Pool initialized.");
     } catch (err) {
       console.error("Pool initialization failed:", err);
-      alert(`❌ ${err.message}`);
+      alert(err.message || "Initialization failed.");
     } finally {
       setLoading(false);
     }
@@ -72,49 +54,26 @@ export default function InitializePool({ onSuccess, disabled }) {
 
   return (
     <div
-      style={{
-        padding: "20px",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        opacity: disabled ? 0.5 : 1,
-        pointerEvents: disabled ? "none" : "auto",
-      }}
+      className={`p-4 border rounded bg-black text-white text-sm ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      }`}
     >
-      <h3 style={{ marginTop: 0, color: "#2196F3" }}>🏊 Initialize Pool</h3>
-      <p style={{ fontSize: "14px", color: "#666" }}>
-        Create your personal lending pool
+      <h3 className="text-base font-semibold mb-2">Initialize Pool</h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Create your lending pool for this wallet.
       </p>
 
       <button
         onClick={handleInit}
         disabled={loading || disabled}
-        style={{
-          padding: "12px 24px",
-          fontSize: "14px",
-          fontWeight: "600",
-          cursor: loading || disabled ? "not-allowed" : "pointer",
-          backgroundColor: loading || disabled ? "#ccc" : "#2196F3",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          width: "100%",
-        }}
+        className="w-full py-2 text-sm font-medium rounded bg-blue-600 text-white disabled:bg-gray-600"
       >
-        {loading ? "⏳ Initializing..." : "Initialize Pool"}
+        {loading ? "Initializing..." : "Initialize"}
       </button>
 
       {txSignature && (
-        <div
-          style={{
-            marginTop: "15px",
-            padding: "10px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "4px",
-          }}
-        >
-          <p style={{ margin: 0, color: "#2e7d32", fontSize: "13px" }}>
-            ✅ Success!
-          </p>
+        <div className="mt-3 text-xs text-green-400 break-all">
+          Tx: {txSignature}
         </div>
       )}
     </div>

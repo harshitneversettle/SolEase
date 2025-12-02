@@ -45,9 +45,11 @@ pub fn handler(ctx : Context<InitializeTreasury>)->Result<()>{
     treasury.liquidity_mint = ctx.accounts.liquidity_mint.key() ;
     treasury.total_liquidity = 0 ;
     treasury.total_borrowed = 0 ;
-    treasury.interest_rate = 500 ;     // 5% of the the amount liquidated 
+    treasury.royality_rate = 500 ;     // 5% of the the amount liquidated 
     treasury.treasury_ata = ctx.accounts.treasury_vault.key() ;    // treasury kaha saara fund store karega 
     treasury.bump = ctx.bumps.treasury_state ;
+    treasury.interest_rate = 0 ;
+    treasury.total_interest_gained = 0 ;
 
     msg!("Treasury initialized successfully ");
     Ok(())

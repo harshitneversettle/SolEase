@@ -11,31 +11,20 @@ import { BN } from "@coral-xyz/anchor";
 
 export default function DepositTreasury() {
   const { publicKey } = useWallet();
-  const { program, connection, error } = useProgram();
+  const { program, connection } = useProgram();
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState(null);
 
-  if (!program && !error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⏳ Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⚠️ {error}</p>
-      </div>
-    );
-  }
-
   const handleDeposit = async () => {
-    if (!publicKey) return alert("❌ Connect wallet first!");
-    if (!amount || parseFloat(amount) <= 0)
-      return alert("❌ Enter valid amount");
+    if (!program || !connection || !publicKey) {
+      alert("Connect wallet first.");
+      return;
+    }
+    if (!amount || parseFloat(amount) <= 0) {
+      alert("Enter a valid amount.");
+      return;
+    }
 
     setLoading(true);
     setTxSignature(null);
@@ -43,25 +32,21 @@ export default function DepositTreasury() {
     try {
       const depositAmount = new BN(parseFloat(amount) * LAMPORTS_PER_SOL);
 
-      // Treasury State PDA
       const [treasuryStatePda] = PublicKey.findProgramAddressSync(
         [Buffer.from("treasury")],
         PROGRAM_ID
       );
 
-      // User Treasury PDA (per user)
       const [userTreasuryPda] = PublicKey.findProgramAddressSync(
         [Buffer.from("user-deposit"), publicKey.toBuffer()],
         PROGRAM_ID
       );
 
-      // Treasury Authority (same as treasury state in your case)
       const [treasuryAuthority] = PublicKey.findProgramAddressSync(
         [Buffer.from("treasury")],
         PROGRAM_ID
       );
 
-      // User's WSOL ATA
       const userAta = getAssociatedTokenAddressSync(
         LIQUIDITY_MINT,
         publicKey,
@@ -69,7 +54,6 @@ export default function DepositTreasury() {
         TOKEN_PROGRAM_ID
       );
 
-      // Treasury's WSOL ATA
       const treasuryAta = getAssociatedTokenAddressSync(
         LIQUIDITY_MINT,
         treasuryAuthority,
@@ -77,115 +61,63 @@ export default function DepositTreasury() {
         TOKEN_PROGRAM_ID
       );
 
-      console.log("Depositing to treasury...");
-      console.log("Amount:", depositAmount.toString());
-      console.log("Treasury State:", treasuryStatePda.toBase58());
-      console.log("User Treasury:", userTreasuryPda.toBase58());
-      console.log("Treasury Authority:", treasuryAuthority.toBase58());
-      console.log("User ATA:", userAta.toBase58());
-      console.log("Treasury ATA:", treasuryAta.toBase58());
-
       const tx = await program.methods
         .depositTreasury(depositAmount)
         .accounts({
           treasuryState: treasuryStatePda,
-          userTreasury: userTreasuryPda, // ✅ Added this!
-          treasuryAuthority: treasuryAuthority, // ✅ Added this!
+          userTreasury: userTreasuryPda,
+          treasuryAuthority,
           user: publicKey,
-          userAta: userAta,
+          userAta,
           liquidityMint: LIQUIDITY_MINT,
-          treasuryAta: treasuryAta,
+          treasuryAta,
           systemProgram: SystemProgram.programId,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           tokenProgram: TOKEN_PROGRAM_ID,
         })
-        .rpc({
-          skipPreflight: true,
-          commitment: "processed",
-        });
-
-      console.log("Deposit Treasury TX:", tx);
+        .rpc();
 
       await connection.confirmTransaction(tx, "processed");
       setTxSignature(tx);
-      alert(`✅ Deposited ${amount} SOL to treasury!`);
       setAmount("");
+      alert("Liquidity deposited.");
     } catch (err) {
       console.error("Treasury deposit failed:", err);
-
-      // ✅ Log full error details
-      if (err.logs) {
-        console.error("Transaction logs:", err.logs);
-      }
-
-      alert(`❌ ${err.message || "Deposit failed"}`);
+      alert(err.message || "Deposit failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-      }}
-    >
-      <h3 style={{ marginTop: 0, color: "#FF9800" }}>💰 Add Liquidity</h3>
-      <p style={{ fontSize: "14px", color: "#666" }}>
-        Deposit WSOL to provide lending liquidity
+    <div className="p-4 border rounded bg-black text-white text-sm">
+      <h3 className="text-base font-semibold mb-2">Add Liquidity</h3>
+      <p className="text-xs text-gray-400 mb-3">
+        Deposit WSOL to the treasury.
       </p>
 
       <input
         type="number"
         step="0.1"
         min="0"
-        placeholder="Amount in SOL (e.g., 10)"
+        placeholder="Amount in SOL"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         disabled={loading}
-        style={{
-          padding: "10px",
-          width: "100%",
-          marginBottom: "10px",
-          fontSize: "14px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          boxSizing: "border-box",
-        }}
+        className="w-full mb-3 px-2 py-2 text-sm bg-gray-900 border border-gray-700 rounded"
       />
 
       <button
         onClick={handleDeposit}
         disabled={loading || !amount}
-        style={{
-          padding: "12px 24px",
-          fontSize: "14px",
-          fontWeight: "600",
-          cursor: loading || !amount ? "not-allowed" : "pointer",
-          backgroundColor: loading || !amount ? "#ccc" : "#FF9800",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          width: "100%",
-        }}
+        className="w-full py-2 text-sm font-medium rounded bg-amber-500 text-black disabled:bg-gray-600"
       >
-        {loading ? "⏳ Processing..." : "Deposit Liquidity"}
+        {loading ? "Processing..." : "Deposit"}
       </button>
 
       {txSignature && (
-        <div
-          style={{
-            marginTop: "15px",
-            padding: "10px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "4px",
-          }}
-        >
-          <p style={{ margin: 0, color: "#2e7d32", fontSize: "13px" }}>
-            ✅ Success!
-          </p>
+        <div className="mt-3 text-xs text-green-400 break-all">
+          Tx: {txSignature}
         </div>
       )}
     </div>

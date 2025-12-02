@@ -50,10 +50,10 @@ pub fn handler(ctx: Context<InitializePool>)->Result<()>{
     pool.loan_mint = ctx.accounts.loan_mint.key();
     pool.loan_amount = 0 ;
     pool.vault_ata = ctx.accounts.vault_ata.key() ;
+    pool.vault_authority_bump = ctx.bumps.vault_authority;
     pool.bump = ctx.bumps.pool_state ;
     pool.interest_rate = 500 ;     // 5%
     pool.last_update_time = 0 ;
-    pool.vault_authority_bump = ctx.bumps.vault_authority;
     pool.ltv = 50 ;
     msg!(" Personal pool initialized for user: {}", pool.owner);
     Ok(())

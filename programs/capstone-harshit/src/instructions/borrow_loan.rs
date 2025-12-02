@@ -22,7 +22,7 @@ use pyth_sdk_solana::load_price_feed_from_account_info;
         pub loan_mint : Account<'info , Mint> ,
 
         #[account(mut)] 
-        pub user_ata : Account<'info , TokenAccount> ,
+        pub user_loan_ata : Account<'info , TokenAccount> ,
 
         pub owner : Signer<'info> ,
 
@@ -48,10 +48,14 @@ use pyth_sdk_solana::load_price_feed_from_account_info;
 
         let ltv = pool.ltv as u64 ;
         let curr_price = 142000000  ;   // of sol/usdc ;
-        let collateral_amount = pool.collateral_amount * 1000000  ;   // in lamports 
-        let collateral_ratio = ((collateral_amount as u128) * 1_000_000_000_u128) / (curr_price as u128);
-        let max_borrow = ((collateral_ratio * (ltv as u128)) / 100) as u64; 
-
+        let collateral_amount = pool.collateral_amount.checked_mul(1000000).expect("overflow")  ;   // in lamports 
+        let collateral_ratio = ((collateral_amount as u128).checked_mul(1_000_000_000_u128).expect("mul overflow")).checked_div((curr_price as u128)).expect("division error or overflow");
+        let max_borrow = collateral_ratio
+            .checked_mul(ltv as u128)
+            .expect("overflow in mul")
+            .checked_div(100)
+            .expect("overflow or div by zero")
+            as u64;
     
         let amount: u64 = max_borrow as u64;
 
@@ -61,20 +65,25 @@ use pyth_sdk_solana::load_price_feed_from_account_info;
 
         let transfer_accounts = Transfer{
             from : ctx.accounts.treasury_ata.to_account_info() ,
-            to : ctx.accounts.user_ata.to_account_info() ,
+            to : ctx.accounts.user_loan_ata.to_account_info() ,
             authority : ctx.accounts.treasury_authority.to_account_info()
         } ;
 
         let cpi_context = CpiContext::new_with_signer(ctx.accounts.token_program.to_account_info(), transfer_accounts, signer_seeds) ;
 
         token::transfer(cpi_context, amount)?;
-
-        treasury.total_liquidity -= amount as u64;
-        treasury.total_borrowed += amount as u64 ;
         pool.loan_amount += amount as u64 ; 
         pool.last_update_time = Clock::get()?.unix_timestamp;
         pool.borrow_amount = amount as u64 ;
         pool.borrow_time = Clock::get()?.unix_timestamp ; 
+        treasury.total_borrowed += amount as u64 ;
+        let threshold_limit = 25 ;  // 25 % is setted as threshold 
+        let curr_capacity = (treasury.total_liquidity.checked_sub(treasury.total_borrowed)).expect("overflow").checked_mul(100).expect("overflow").checked_div(treasury.total_liquidity).expect("div by zero or overflow") ;
+        if curr_capacity >= threshold_limit {
+            treasury.interest_rate = 500 ;
+        } else {
+            treasury.interest_rate = 2500 ;
+        }
         msg!("Borrowed {} at timestamp {}", amount, Clock::get()?.unix_timestamp);
         Ok(())
 

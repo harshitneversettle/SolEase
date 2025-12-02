@@ -8,6 +8,8 @@ pub struct TreasuryState{
     pub treasury_ata : Pubkey ,   // kaha rakha hai 
     pub total_liquidity : u64 ,   // total kitna hai 
     pub total_borrowed : u64 ,    // total me se kitna borrowed hai 
-    pub interest_rate : u16 ,
+    pub royality_rate : u16 ,
+    pub interest_rate : u64 ,
     pub bump : u8 ,
+    pub total_interest_gained : u128 
 }   

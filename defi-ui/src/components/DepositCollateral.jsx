@@ -11,37 +11,25 @@ import { BN } from "@coral-xyz/anchor";
 
 export default function DepositCollateral({ onSuccess, disabled }) {
   const { publicKey } = useWallet();
-  const { program, connection, error } = useProgram();
+  const { program, connection } = useProgram();
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
   const [txSignature, setTxSignature] = useState(null);
 
-  if (!program && !error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⏳ Loading...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <p>⚠️ {error}</p>
-      </div>
-    );
-  }
-
   const handleDeposit = async () => {
-    if (!publicKey) return alert("❌ Connect wallet!");
-    if (!amount || parseFloat(amount) <= 0)
-      return alert("❌ Enter valid amount");
+    if (!program || !connection || !publicKey) {
+      alert("Connect wallet first.");
+      return;
+    }
+    if (!amount || parseFloat(amount) <= 0) {
+      alert("Enter a valid amount.");
+      return;
+    }
 
     setLoading(true);
     setTxSignature(null);
 
     try {
-      // Collateral tokens have 6 decimals
       const depositAmount = new BN(parseFloat(amount) * 1e6);
 
       const [poolStatePda] = PublicKey.findProgramAddressSync(
@@ -54,7 +42,6 @@ export default function DepositCollateral({ onSuccess, disabled }) {
         PROGRAM_ID
       );
 
-      // User's collateral ATA
       const userAta = getAssociatedTokenAddressSync(
         COLLATERAL_MINT,
         publicKey,
@@ -62,7 +49,6 @@ export default function DepositCollateral({ onSuccess, disabled }) {
         TOKEN_PROGRAM_ID
       );
 
-      // Vault's collateral ATA
       const vaultAta = getAssociatedTokenAddressSync(
         COLLATERAL_MINT,
         vaultAuthority,
@@ -70,17 +56,14 @@ export default function DepositCollateral({ onSuccess, disabled }) {
         TOKEN_PROGRAM_ID
       );
 
-      console.log("Vault Authority:", vaultAuthority.toBase58());
-      console.log("Vault ATA:", vaultAta.toBase58());
-
       const tx = await program.methods
         .deposit(depositAmount)
         .accounts({
           poolState: poolStatePda,
-          vaultAuthority: vaultAuthority,
+          vaultAuthority,
           collateralMint: COLLATERAL_MINT,
-          vaultAta: vaultAta,
-          userAta: userAta,
+          vaultAta,
+          userAta,
           owner: publicKey,
           tokenProgram: TOKEN_PROGRAM_ID,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -88,17 +71,14 @@ export default function DepositCollateral({ onSuccess, disabled }) {
         })
         .rpc();
 
-      console.log("Deposit Collateral TX:", tx);
-
       await connection.confirmTransaction(tx, "confirmed");
       setTxSignature(tx);
-      alert(`✅ Deposited ${amount} collateral tokens!`);
       setAmount("");
-
       if (onSuccess) onSuccess();
+      alert("Collateral deposited.");
     } catch (err) {
-      console.error("Collateral deposit failed:", err);
-      alert(`❌ ${err.message}`);
+      console.error(err);
+      alert(err.message || "Collateral deposit failed.");
     } finally {
       setLoading(false);
     }
@@ -106,67 +86,37 @@ export default function DepositCollateral({ onSuccess, disabled }) {
 
   return (
     <div
-      style={{
-        padding: "20px",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        opacity: disabled ? 0.5 : 1,
-        pointerEvents: disabled ? "none" : "auto",
-      }}
+      className={`p-4 border rounded bg-black text-white text-sm ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      }`}
     >
-      <h3 style={{ marginTop: 0, color: "#4CAF50" }}>🔒 Deposit Collateral</h3>
-      <p style={{ fontSize: "14px", color: "#666" }}>
-        Deposit collateral tokens to enable borrowing
-      </p>
+      <h3 className="text-base font-semibold mb-2">Deposit Collateral</h3>
+      <div className="mb-3 text-xs text-gray-400">
+        Deposit collateral tokens to enable borrowing.
+      </div>
 
       <input
         type="number"
         step="1"
         min="0"
-        placeholder="Amount (e.g., 150)"
+        placeholder="Amount"
         value={amount}
         onChange={(e) => setAmount(e.target.value)}
         disabled={loading || disabled}
-        style={{
-          padding: "10px",
-          width: "100%",
-          marginBottom: "10px",
-          fontSize: "14px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="w-full mb-3 px-2 py-2 text-sm bg-gray-900 border border-gray-700 rounded"
       />
 
       <button
         onClick={handleDeposit}
         disabled={loading || disabled || !amount}
-        style={{
-          padding: "12px 24px",
-          fontSize: "14px",
-          fontWeight: "600",
-          cursor: loading || disabled ? "not-allowed" : "pointer",
-          backgroundColor: loading || disabled ? "#ccc" : "#4CAF50",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          width: "100%",
-        }}
+        className="w-full py-2 text-sm font-medium rounded bg-green-600 text-white disabled:bg-gray-600"
       >
-        {loading ? "⏳ Processing..." : "Deposit Collateral"}
+        {loading ? "Processing..." : "Deposit"}
       </button>
 
       {txSignature && (
-        <div
-          style={{
-            marginTop: "15px",
-            padding: "10px",
-            backgroundColor: "#e8f5e9",
-            borderRadius: "4px",
-          }}
-        >
-          <p style={{ margin: 0, color: "#2e7d32", fontSize: "13px" }}>
-            ✅ Success!
-          </p>
+        <div className="mt-3 text-xs text-green-400 break-all">
+          Tx: {txSignature}
         </div>
       )}
     </div>
