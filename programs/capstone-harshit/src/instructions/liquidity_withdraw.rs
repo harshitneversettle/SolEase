@@ -71,7 +71,7 @@ pub fn handler(ctx : Context<LiquidityWithdraw> , amount_deposited : u64 )->Resu
     } ;
 
     let cpi_context = CpiContext::new_with_signer(ctx.accounts.token_program.to_account_info(), transfer_accounts , signer_seeds) ; 
-    token::transfer(cpi_context, amount) ;
+    token::transfer(cpi_context, amount)?;
 
     lp.liquidity_amount = lp.liquidity_amount.checked_sub(amount).expect("Overflow");
     treasury.total_liquidity = treasury.total_liquidity.checked_sub(amount).expect("Overflow") ;

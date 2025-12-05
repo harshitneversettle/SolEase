@@ -3,4 +3,9 @@ solana airdrop 1000 mwcfgyGrw3N36bEVMZFJzWQkidk2hLjGAZmf2m91QWC
 
 
 spl-token create-account 3LktYvnLKFFS9rjdG3qDRB4fV9sJFooRkKxVcJK7GFLg --owner FRUSb9M6YwKtWEVnqy83smBWbhGccbw14HmN83XDz6Bm \
-  --fee-payer /home/titan/Desktop/capstone-harshit/harshit.json
+  --fee-payer /home/titan/Desktop/capstone-harshit/harshit.jsonv                  
+
+
+  spl-token accounts --owner 7zJKWL1qBYYExf23hRrcojrWVZJcpEg4tSQNFmqJJFm9 --url http://127.0.0.1:8899
+
+  node -e "const {Connection,PublicKey}=require('@solana/web3.js');(async()=>{const c=new Connection('http://127.0.0.1:8899','confirmed');const p=new PublicKey('A2Z7dNVRr7hHzdRPTj5gXeMQrfRp7UFAd37duzH45iSD');const info=await c.getParsedAccountInfo(p);console.log(JSON.stringify(info?.value?.data?.parsed?.info?.tokenAmount || info, null, 2));})();"

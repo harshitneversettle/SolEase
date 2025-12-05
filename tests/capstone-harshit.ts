@@ -128,7 +128,8 @@ describe("LFG!!", () => {
 
   // init lpState and deposit liquidity
   it("Init Lpstate and Liquidator adding liquidity ", async () => {
-    const amount = 10 * LAMPORTS_PER_SOL;
+    const amount = 15 * LAMPORTS_PER_SOL;
+    const deposit = 10 * LAMPORTS_PER_SOL;
     let lpStatePda: PublicKey;
     let lpstateBump: number;
     let owner = HARSHIT_KEYPAIR;
@@ -220,13 +221,13 @@ describe("LFG!!", () => {
     const tx2 = new Transaction().add(ix1, ix2);
     await sendAndConfirmTransaction(connection, tx2, [HARSHIT_KEYPAIR]);
 
-    console.log(`Successfully wrapped ${amount/1e9} SOL into WSOL.`);
+    console.log(`Successfully wrapped ${amount / 1e9} SOL into WSOL.`);
 
     const balanceAfterWrap = (await getAccount(connection, userATA)).amount;
     console.log("LP WSOL after wrap:", Number(balanceAfterWrap) / 1e9);
 
     await program.methods
-      .depositTreasury(new anchor.BN(balanceAfterWrap))
+      .depositTreasury(new anchor.BN(deposit))
       .accounts({
         treasuryState: treasuryStatePda,
         lpState: lpStatePda,
@@ -322,7 +323,7 @@ describe("LFG!!", () => {
       TEST_KEYPAIR,
       TEST_KEYPAIR.publicKey,
       TEST_KEYPAIR.publicKey,
-      6
+      0
     );
 
     console.log("   Collateral Mint created at: " + collateralMint.toBase58());
@@ -445,10 +446,10 @@ describe("LFG!!", () => {
       program.programId
     );
 
-     console.log("\nPDAs:");
-     console.log("Treasury:", treasuryPda.toBase58());
-     console.log("User pool:", poolPda.toBase58());
-     console.log("");
+    console.log("\nPDAs:");
+    console.log("Treasury:", treasuryPda.toBase58());
+    console.log("User pool:", poolPda.toBase58());
+    console.log("");
 
     let [treasuryAuthority] = PublicKey.findProgramAddressSync(
       [Buffer.from("treasury-authority")],
@@ -508,7 +509,9 @@ describe("LFG!!", () => {
       .amount;
 
     console.log("Borrow Summary:");
-    console.log("   Treasury Balance After Borrow : " + Number(treasuryAfter) / 1e9);
+    console.log(
+      "   Treasury Balance After Borrow : " + Number(treasuryAfter) / 1e9
+    );
     console.log("   User Balance After Borrow : " + Number(userAfter) / 1e9);
     console.log(
       "   Treasury Decrease: " + Number(treasuryBefore - treasuryAfter) / 1e9
@@ -600,14 +603,12 @@ describe("LFG!!", () => {
     const poolState = await program.account.poolState.fetch(poolPda);
     collateralMint = poolState.collateralMint;
     let vaultAta = poolState.vaultAta;
-    let userCollateralATA = await getOrCreateAssociatedTokenAccount(
-      connection,
-      TEST_KEYPAIR,
+    let userCollateralATA = await getAssociatedTokenAddressSync(
       collateralMint,
       TEST_KEYPAIR.publicKey
     );
 
-    userCollateralAta = userCollateralATA.address;
+    userCollateralAta = userCollateralATA;
 
     let treasuryState = await program.account.treasuryState.fetch(treasuryPda);
     treasuryAta = treasuryState.treasuryAta;
@@ -781,7 +782,6 @@ describe("LFG!!", () => {
         owner: owner.publicKey,
         treasuryAuthority: treasuryAuthority,
         treasuryAta: treasuryAta,
-        amount,
         systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
@@ -793,18 +793,11 @@ describe("LFG!!", () => {
     console.log(
       "Lp ATA balance after withdraw : " + Number(afterBalance) / 1e9 + " wSol"
     );
-    const treasury = await program.account.treasuryState.fetch(
-      treasuryStatePda
-    );
+    const treasury = await program.account.treasuryState.fetch(treasuryPda);
     console.log(
       "Treasury Liquidity after withdraw : " +
         Number(treasury.totalLiquidity) / 1e9 +
         " wSol"
     );
   });
-
-
-
-
-
 });

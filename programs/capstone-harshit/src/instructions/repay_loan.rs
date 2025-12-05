@@ -128,7 +128,7 @@ pub fn handler(ctx : Context<RepayLoan>)->Result<()>{
         } ;
 
         let cpi_context = CpiContext::new_with_signer(ctx.accounts.token_program.to_account_info(), transfer_accounts2 , signer_seeds) ;
-        token::transfer(cpi_context, amount) ;
+        token::transfer(cpi_context, amount)?;
         pool.collateral_amount = 0 ;
         
         
