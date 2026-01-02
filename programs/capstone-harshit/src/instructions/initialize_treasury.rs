@@ -32,15 +32,13 @@ pub struct InitializeTreasury<'info> {
     pub treasury_authority: UncheckedAccount<'info>,
 
     #[account(
-        init,
-        payer = admin,
+        mut,
         token::mint = liquidity_mint,
         token::authority = treasury_authority
     )]
     pub treasury_vault: Account<'info, TokenAccount> ,   // ATA for treasurypda 
 
-    /// CHECK: WSOL native mint (do NOT deserialize as Mint!)
-    pub liquidity_mint: UncheckedAccount<'info>,
+    pub liquidity_mint: Account<'info, Mint>,
     
     pub system_program: Program<'info, System>,
     pub associated_token_program: Program<'info, AssociatedToken>,
