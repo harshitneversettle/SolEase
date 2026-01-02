@@ -13,5 +13,13 @@ pub enum ErrorCode {
     #[msg("Invalid mint")]
     InvalidMint,
     #[msg("Account not initialized")]
-    NotInitialized,
+    NotInitialized, 
+    #[msg("Invalid pyth data")]
+    InvalidPriceFeed,
+    #[msg("Stale Price")]
+    StalePrice,
+    #[msg("Borrow amount would exceed collateral-backed limit")]
+    BorrowLimitExceeded,
+    #[msg("No remaining borrow capacity available")]
+    NoBorrowCapacity,
 }
